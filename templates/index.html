@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <title>WebSocket Data</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var socket = io();
+            socket.on('new_message', function(msg){
+                var messageElement = document.createElement('p');
+                messageElement.innerText = msg;
+                document.body.appendChild(messageElement);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>WebSocket Data</h1>
+</body>
+</html>
