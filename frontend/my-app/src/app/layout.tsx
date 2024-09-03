@@ -142,6 +142,7 @@ export default function RootLayout({
           </DropdownMenu>
         </div>
       </header>
+      {children}
       </body>
     </html>
   );
