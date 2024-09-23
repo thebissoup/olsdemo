@@ -17,6 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import CustomShapeBarChart from "./CustomShapeBarChart";
 
 export const description = "A line chart with custom dots";
 
@@ -115,7 +116,8 @@ export function BarChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={candlestickConfig}>
-          <LineChart
+          <CustomShapeBarChart/>
+          {/* <LineChart
             accessibilityLayer
             data={candlestickData}
             margin={{
@@ -157,7 +159,7 @@ export function BarChart() {
                 );
               }}
             />
-          </LineChart>
+          </LineChart> */}
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
