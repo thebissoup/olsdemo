@@ -1,7 +1,7 @@
 "use client";
 
 import { GitCommitVertical, TrendingUp } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Area, AreaChart, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -20,78 +20,40 @@ import {
 
 export const description = "A line chart with custom dots";
 
-const candlestickData = [
-  {
-    d: "forex",
-    p: "finazon",
-    ch: "bars",
-    f: "1s",
-    aggr: "1m",
-    s: "EUR/USD",
-    t: 20,
-    o: 220.06,
-    h: 220.13,
-    l: 219.92,
-    c: 219.96,
-    v: 4572,
-  },
-  {
-    d: "forex",
-    p: "finazon",
-    ch: "bars",
-    f: "1s",
-    aggr: "1m",
-    s: "EUR/USD",
-    t: 21,
-    o: 219.96,
-    h: 220.08,
-    l: 219.9,
-    c: 220.05,
-    v: 4821,
-  },
-  {
-    d: "forex",
-    p: "finazon",
-    ch: "bars",
-    f: "1s",
-    aggr: "1m",
-    s: "EUR/USD",
-    t: 22,
-    o: 220.05,
-    h: 220.15,
-    l: 219.98,
-    c: 220.12,
-    v: 5100,
-  },
-  {
-    d: "forex",
-    p: "finazon",
-    ch: "bars",
-    f: "1s",
-    aggr: "1m",
-    s: "EUR/USD",
-    t: 23,
-    o: 220.12,
-    h: 220.2,
-    l: 220.07,
-    c: 220.18,
-    v: 4978,
-  },
-  {
-    d: "forex",
-    p: "finazon",
-    ch: "bars",
-    f: "1s",
-    aggr: "1m",
-    s: "EUR/USD",
-    t: 24,
-    o: 220.18,
-    h: 220.25,
-    l: 220.1,
-    c: 220.22,
-    v: 5231,
-  },
-];
+function generateRandomCandlestickData(entries = 100) {
+  const candlestickData = [];
+  let lastClose = 220; // Starting price
+
+  for (let i = 0; i < entries; i++) {
+    const open = lastClose + (Math.random() - 0.5) * 0.2;  // Small variation from the last close
+    const close = open + (Math.random() - 0.5) * 0.2;     // Small variation from open
+    const high = Math.max(open, close) + Math.random() * 0.1; // High is at least as high as open or close
+    const low = Math.min(open, close) - Math.random() * 0.1;  // Low is at least as low as open or close
+    const volume = Math.floor(Math.random() * 10000) + 1000;  // Random volume between 1000 and 11000
+
+    candlestickData.push({
+      d: "forex",
+      p: "finazon",
+      ch: "bars",
+      f: "1s",
+      aggr: "1m",
+      s: "EUR/USD",
+      t: i, // Time index (or timestamp if you prefer)
+      o: open.toFixed(2),
+      h: high.toFixed(2),
+      l: low.toFixed(2),
+      c: close.toFixed(2),
+      v: volume
+    });
+
+    lastClose = close;  // Update the last close for the next iteration
+  }
+
+  return candlestickData;
+}
+
+const candlestickData = generateRandomCandlestickData(50);
+
 
 
 const candlestickConfig = {
@@ -115,7 +77,67 @@ export function BarChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={candlestickConfig}>
-          <LineChart
+          <AreaChart
+            accessibilityLayer
+            data={candlestickData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="t" // Point of Concern
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <svg></svg>
+            <defs>
+              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-c)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-c)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-o)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-o)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <Area
+              dataKey="o"
+              type="natural"
+              fill="url(#fillMobile)"
+              fillOpacity={0.4}
+              stroke="var(--color-o)"
+              stackId="a"
+            />
+            <Area
+              dataKey="c"
+              type="natural"
+              fill="url(#fillDesktop)"
+              fillOpacity={0.4}
+              stroke="var(--color-c)"
+              stackId="a"
+            />
+          </AreaChart>
+          {/* <LineChart
             accessibilityLayer
             data={candlestickData}
             margin={{
@@ -137,6 +159,32 @@ export function BarChart() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
+            <defs>
+              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
             <Line
               dataKey="o" //Point of Concern
               type="natural"
@@ -146,18 +194,38 @@ export function BarChart() {
                 const r = 24;
                 return (
                   <GitCommitVertical
-                    key={payload.month}
+                    key={payload.t}
                     x={cx - r / 2}
                     y={cy - r / 2}
                     width={r}
                     height={r}
                     fill="hsl(var(--background))"
-                    stroke="var(--color-o)"
+                    stroke="var(--color-)"
                   />
                 );
               }}
             />
-          </LineChart>
+            <Line
+              dataKey="c" //Point of Concern
+              type="natural"
+              stroke="var(--color-c)" //Point of Concern
+              strokeWidth={2}
+              dot={({ cx, cy, payload }) => {
+                const r = 24;
+                return (
+                  <GitCommitVertical
+                    key={payload.t}
+                    x={cx - r / 2}
+                    y={cy - r / 2}
+                    width={r}
+                    height={r}
+                    fill="hsl(var(--background))"
+                    stroke="var(--color-)"
+                  />
+                );
+              }}
+            />
+          </LineChart> */}
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
