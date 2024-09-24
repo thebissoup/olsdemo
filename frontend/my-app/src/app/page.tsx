@@ -1,10 +1,10 @@
-import { BarChart } from "@/components/ui/barchart";
+import { CandleStickChart } from "@/components/ui/candlestickchart";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <BarChart />
+        <CandleStickChart />
     </main>
   );
 }
