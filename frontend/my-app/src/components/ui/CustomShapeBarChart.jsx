@@ -10,6 +10,56 @@ import {
   Cell,
 } from "recharts";
 
+class CandlestickKeys {
+  static DATA_TYPE = "d";
+  static PROVIDER = "p";
+  static CHART_TYPE = "ch";
+  static FREQUENCY = "f";
+  static AGGREGATION = "aggr";
+  static SYMBOL = "s";
+  static TIMESTAMP = "t";
+  static OPEN = "o";
+  static HIGH = "h";
+  static LOW = "l";
+  static CLOSE = "c";
+  static VOLUME = "v";
+  static OPEN_CLOSE = "oc";
+}
+
+function generateRandomCandlestickData(entries = 100) {
+  const candlestickData = [];
+  let lastClose = 220; // Starting price
+
+  for (let i = 0; i < entries; i++) {
+    const open = lastClose + (Math.random() - 0.5) * 0.2; // Small variation from the last close
+    const close = open + (Math.random() - 0.5) * 0.2; // Small variation from open
+    const high = Math.max(open, close) + Math.random() * 0.1; // High is at least as high as open or close
+    const low = Math.min(open, close) - Math.random() * 0.1; // Low is at least as low as open or close
+    const volume = Math.floor(Math.random() * 10000) + 1000; // Random volume between 1000 and 11000
+
+    candlestickData.push({
+      [CandlestickKeys.DATA_TYPE]: "forex",
+      [CandlestickKeys.PROVIDER]: "finazon",
+      [CandlestickKeys.CHART_TYPE]: "bars",
+      [CandlestickKeys.FREQUENCY]: "1s",
+      [CandlestickKeys.AGGREGATION]: "1m",
+      [CandlestickKeys.SYMBOL]: "EUR/USD",
+      [CandlestickKeys.TIMESTAMP]: i, // Time index (or timestamp if you prefer)
+      [CandlestickKeys.OPEN]: open.toFixed(2),
+      [CandlestickKeys.HIGH]: high.toFixed(2),
+      [CandlestickKeys.LOW]: low.toFixed(2),
+      [CandlestickKeys.CLOSE]: close.toFixed(2),
+      [CandlestickKeys.VOLUME]: volume,
+    });
+
+    lastClose = close; // Update the last close for the next iteration
+  }
+
+  return candlestickData;
+}
+
+let candlestickData = generateRandomCandlestickData(50);
+
 // Define a color palette to be used in the chart
 const colors = [
   "#1f77b4",
@@ -24,154 +74,11 @@ const colors = [
   "#17becf",
 ];
 
-// Raw data for the chart (can be swapped with other datasets)
-const rawData1 = [
-  { high: 100, low: 0, open: 40, close: 60, ts: 1562791020 },
-  { high: 100, low: 0, open: 60, close: 40, ts: 1562792020 },
-  { high: 70, low: 20, open: 25, close: 50, ts: 1562793020 },
-];
-
-const rawData = [
-  { high: 7.18811, low: 7.18127, open: 7.18631, close: 7.183, ts: 1562790720 },
-  {
-    high: 7.21184,
-    low: 7.20139,
-    open: 7.20139,
-    close: 7.21138,
-    ts: 1562790780,
-  },
-  { high: 7.21808, low: 7.21524, open: 7.2168, close: 7.21675, ts: 1562790840 },
-  { high: 7.19661, low: 7.19343, open: 7.19633, close: 7.1936, ts: 1562790900 },
-  {
-    high: 7.18131,
-    low: 7.17473,
-    open: 7.17819,
-    close: 7.18131,
-    ts: 1562790960,
-  },
-  {
-    high: 7.17874,
-    low: 7.17475,
-    open: 7.17874,
-    close: 7.17604,
-    ts: 1562791020,
-  },
-  {
-    high: 7.19077,
-    low: 7.18493,
-    open: 7.18684,
-    close: 7.19077,
-    ts: 1562791080,
-  },
-  { high: 7.1837, low: 7.17899, open: 7.1792, close: 7.18246, ts: 1562791140 },
-  {
-    high: 7.18788,
-    low: 7.18098,
-    open: 7.18338,
-    close: 7.18788,
-    ts: 1562791200,
-  },
-  {
-    high: 7.20103,
-    low: 7.19715,
-    open: 7.19778,
-    close: 7.19715,
-    ts: 1562791260,
-  },
-  {
-    high: 7.21353,
-    low: 7.20752,
-    open: 7.20873,
-    close: 7.21116,
-    ts: 1562791320,
-  },
-];
-
-// Another raw data sample (for potential future use)
-const rawData3 = [
-  {
-    high: 11808.494,
-    low: 11775.101,
-    open: 11790.496,
-    close: 11808.089,
-    ts: 1562791020,
-  },
-  {
-    high: 11846.242,
-    low: 11802.6,
-    open: 11821.585,
-    close: 11843.063,
-    ts: 1562791080,
-  },
-  {
-    high: 11829.147,
-    low: 11803.613,
-    open: 11803.613,
-    close: 11827.385,
-    ts: 1562791140,
-  },
-  {
-    high: 11814.498,
-    low: 11802.755,
-    open: 11814.498,
-    close: 11803.577,
-    ts: 1562791200,
-  },
-  {
-    high: 11829.527,
-    low: 11807.739,
-    open: 11809.03,
-    close: 11829.527,
-    ts: 1562791260,
-  },
-  {
-    high: 11855.419,
-    low: 11825.036,
-    open: 11830.531,
-    close: 11835.936,
-    ts: 1562791320,
-  },
-  {
-    high: 11811.733,
-    low: 11774.447,
-    open: 11803.679,
-    close: 11783.754,
-    ts: 1562791380,
-  },
-  {
-    high: 11790.889,
-    low: 11770.107,
-    open: 11789.994,
-    close: 11787.824,
-    ts: 1562791440,
-  },
-  {
-    high: 11794.769,
-    low: 11757.06,
-    open: 11794.769,
-    close: 11775.199,
-    ts: 1562791500,
-  },
-  {
-    high: 11759.249,
-    low: 11732.995,
-    open: 11759.249,
-    close: 11735.828,
-    ts: 1562791560,
-  },
-  {
-    high: 11734.435,
-    low: 11720.716,
-    open: 11721.952,
-    close: 11722.716,
-    ts: 1562791620,
-  },
-];
-
 const getGrowing = (open, close) => {
   return open < close;
 };
-const getColor = (isGrowing) => (isGrowing ? "green" : "red");
+const getColor = (isGrowing) =>
+  isGrowing ? "var(--color-o)" : "var(--color-c)";
 const getRatio = (open, close, height) => {
   return Math.abs(height / (open - close));
 };
@@ -228,9 +135,9 @@ const Candlestick = ({
   y,
   width,
   height,
-  low,
-  high,
-  openClose: [open, close],
+  [CandlestickKeys.LOW]: low, // Use dynamic key for low price
+  [CandlestickKeys.HIGH]: high, // Use dynamic key for high price
+  [CandlestickKeys.OPEN_CLOSE]: [open, close],
 }) => {
   const isGrowing = getGrowing(open, close); // Determine if the stock price is rising or falling
   const color = getColor(isGrowing); // Set the color based on price movement
@@ -266,33 +173,50 @@ const Candlestick = ({
 };
 
 // Prepare data by transforming the raw data to include openClose array for candlestick usage
-const prepareData = (data) => {
-  return data.map(({ open, close, ...other }) => ({
-    ...other,
-    openClose: [open, close], // Combine open and close prices into an array
-  }));
+const reshapeDataStream = (data) => {
+  return data.map((item) => {
+    const {
+      [CandlestickKeys.OPEN]: open,
+      [CandlestickKeys.CLOSE]: close,
+      ...other
+    } = item;
+
+    return {
+      ...other,
+      [CandlestickKeys.OPEN_CLOSE]: [open, close], // Use the dynamic key name from the class
+    };
+  });
+};
+
+const getMinimumValue = (data) => {
+  return data.reduce((minValue, point) => {
+    const currentMin = Math.min(
+      point[CandlestickKeys.LOW],
+      point[CandlestickKeys.OPEN],
+      point[CandlestickKeys.CLOSE]
+    );
+    return minValue === null || currentMin < minValue ? currentMin : minValue;
+  }, null);
+};
+
+const getMaximumValue = (data) => {
+  const maxValue = data.reduce((maxValue, point) => {
+    const currentMax = Math.max(
+      point[CandlestickKeys.HIGH],
+      point[CandlestickKeys.OPEN],
+      point[CandlestickKeys.CLOSE]
+    );
+    return currentMax > maxValue ? currentMax : maxValue;
+  });
+  return maxValue;
 };
 
 // Main component to render the custom bar chart with candlestick shapes
 const CustomShapeBarChart = () => {
-  const data = prepareData(rawData); // Prepare the data for the chart
-
+  const data = reshapeDataStream(candlestickData); // Prepare the data for the chart
   // Calculate min and max values for the Y axis
-  const minValue = data.reduce(
-    (minValue, { low, openClose: [open, close] }) => {
-      const currentMin = Math.min(low, open, close);
-      return minValue === null || currentMin < minValue ? currentMin : minValue;
-    },
-    null
-  );
-
-  const maxValue = data.reduce(
-    (maxValue, { high, openClose: [open, close] }) => {
-      const currentMax = Math.max(high, open, close);
-      return currentMax > maxValue ? currentMax : maxValue;
-    },
-    minValue
-  );
+  const minValue = getMinimumValue(data);
+  const maxValue = getMaximumValue(data);
 
   // Render the BarChart component with customized candlestick shape
   return (
@@ -304,9 +228,9 @@ const CustomShapeBarChart = () => {
     >
       <XAxis dataKey="ts" />
       <YAxis domain={[minValue, maxValue]} />
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid strokeDasharray="2 2" />
       <Bar
-        dataKey="openClose"
+        dataKey={CandlestickKeys.OPEN_CLOSE}
         fill="#8884d8"
         shape={<Candlestick />} // Use the Candlestick component for each bar
       >

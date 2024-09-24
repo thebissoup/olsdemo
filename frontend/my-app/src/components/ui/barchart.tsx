@@ -98,11 +98,11 @@ const candlestickData = [
 const candlestickConfig = {
   o: {
     label: "Open",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(var(--chart-2))",
   },
   c: {
     label: "Close",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
@@ -111,7 +111,7 @@ export function BarChart() {
   return (
     <Card className="w-full max-w-4xl mx-auto p-6">
       <CardHeader>
-        <CardTitle>Line Chart - Custom Dots</CardTitle>
+        <CardTitle>CandleStick Chart - Custom Dots</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
